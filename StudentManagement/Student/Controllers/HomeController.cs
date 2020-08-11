@@ -37,10 +37,16 @@ namespace Student.Controllers
         }
 
         [HttpPost]
-        public RedirectToActionResult Create( Models.Student student )
+        public IActionResult Create( Models.Student student )
         {
-            Models.Student newStudent = _studentRepository.Add( student );
-            return RedirectToAction( "Details", new { Id = newStudent } );
+            if(ModelState.IsValid)
+            {
+                Models.Student newStudent = _studentRepository.Add( student );
+                return RedirectToAction( "Details", new { Id = newStudent } );
+            }
+
+            return View();
+
         }
     }
 }
