@@ -23,7 +23,7 @@ namespace Student.Controllers
         {
             HomeDetailsViewModel homeDetailsViewModel = new HomeDetailsViewModel()
             {
-                Student = _studentRepository.GetStudent( 1 ),
+                Student = _studentRepository.GetStudent( Id ),
                 PageTitle = "Student Details"
             };
 
