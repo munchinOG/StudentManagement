@@ -30,9 +30,17 @@ namespace Student.Controllers
             return View( homeDetailsViewModel );
         }
 
+        [HttpGet]
         public ViewResult Create( )
         {
             return View();
+        }
+
+        [HttpPost]
+        public RedirectToActionResult Create( Models.Student student )
+        {
+            Models.Student newStudent = _studentRepository.Add( student );
+            return RedirectToAction( "Details", new { Id = newStudent } );
         }
     }
 }
