@@ -11,9 +11,9 @@ namespace Student.Models
         {
             _studentList = new List<Student>()
             {
-                new Student(){Id = 1, Name = "Oguns", Department = "Computer-Sci", Email = "oguns@student.com"},
-                new Student(){Id = 2, Name = "Kiki", Department = "Act", Email = "kiki@student.com"},
-                new Student(){Id = 1, Name = "Ruka", Department = "English", Email = "ruka@student.com"}
+                new Student(){Id = 1, Name = "Oguns", Department = Dept.ComputerSci, Email = "oguns@student.com"},
+                new Student(){Id = 2, Name = "Kiki", Department = Dept.Act, Email = "kiki@student.com"},
+                new Student(){Id = 1, Name = "Ruka", Department = Dept.English, Email = "ruka@student.com"}
             };
         }
 
