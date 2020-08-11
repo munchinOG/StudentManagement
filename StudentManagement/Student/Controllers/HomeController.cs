@@ -19,15 +19,20 @@ namespace Student.Controllers
             return View( model );
         }
 
-        public ViewResult Details( int Id )
+        public ViewResult Details( int? Id )
         {
             HomeDetailsViewModel homeDetailsViewModel = new HomeDetailsViewModel()
             {
-                Student = _studentRepository.GetStudent( Id ),
+                Student = _studentRepository.GetStudent( Id ?? 1 ),
                 PageTitle = "Student Details"
             };
 
             return View( homeDetailsViewModel );
+        }
+
+        public ViewResult Create( )
+        {
+            return View();
         }
     }
 }
