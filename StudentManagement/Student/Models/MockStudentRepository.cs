@@ -17,6 +17,13 @@ namespace Student.Models
             };
         }
 
+        public Student Add( Student student )
+        {
+            student.Id = _studentList.Max( s => s.Id ) + 1;
+            _studentList.Add( student );
+            return student;
+        }
+
         public IEnumerable<Student> GetAllStudents( )
         {
             return _studentList;
