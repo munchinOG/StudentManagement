@@ -15,7 +15,7 @@ namespace Student.Controllers
 
         public ViewResult Index( )
         {
-            var model = _studentRepository.GetAllStudents();
+            var model = _studentRepository.GetAllStudent();
             return View( model );
         }
 
