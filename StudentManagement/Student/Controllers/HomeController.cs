@@ -43,6 +43,20 @@ namespace Student.Controllers
             return View();
         }
 
+        [HttpGet]
+        public ViewResult Edit( int Id )
+        {
+            var student = _studentRepository.GetStudent( Id );
+            var studentEditViewModel = new StudentEditViewModel
+            {
+                Id = student.Id,
+                Name = student.Name,
+                Department = student.Department,
+                ExistingPhotoPath = student.PhotoPath
+            };
+            return View( studentEditViewModel );
+        }
+
         [HttpPost]
         public IActionResult Create( StudentCreateViewModel model )
         {
