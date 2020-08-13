@@ -1,7 +1,7 @@
 ﻿@model HomeDetailsViewModel
 
 @{ ViewBag.Title = "Student Details";
-                var photoPath = "~/Images/" + (Model.Student.PhotoPath ?? "images.jpg"); }
+    var photoPath = "~/Images/" + (Model.Student.PhotoPath ?? "images.jpg"); }
 
 <h3>@Model.PageTitle</h3>
 
@@ -22,7 +22,9 @@
             </div>
             <div class="card-footer text-center">
                 <a asp-controller="Home" asp-action="Index" class="btn btn-primary">Back</a>
-                <a href="#" class="btn btn-primary">Edit</a>
+                <a asp-action="edit" asp-controller="home"
+                   asp-route-id="@Model.Student.Id"
+                   class="btn btn-primary">Edit</a>
                 <a href="#" class="btn btn-primary">Delete</a>
             </div>
         </div>
