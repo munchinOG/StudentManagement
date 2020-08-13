@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Student.Models;
 using Student.ViewModels;
@@ -48,12 +49,15 @@ namespace Student.Controllers
             if(ModelState.IsValid)
             {
                 string uniqueFileName = null;
-                if(model.Photo != null)
+                if(model.Photos != null && model.Photos.Count > 0)
                 {
-                    var uploadsFolder = Path.Combine( _webHostEnvironment.WebRootPath, "images" );
-                    uniqueFileName = Guid.NewGuid().ToString() + "_" + model.Photo.FileName;
-                    var filePath = Path.Combine( uploadsFolder, uniqueFileName );
-                    model.Photo.CopyTo( new FileStream( filePath, FileMode.Create ) );
+                    foreach(IFormFile photo in model.Photos)
+                    {
+                        var uploadsFolder = Path.Combine( _webHostEnvironment.WebRootPath, "images" );
+                        uniqueFileName = Guid.NewGuid().ToString() + "_" + photo.FileName;
+                        var filePath = Path.Combine( uploadsFolder, uniqueFileName );
+                        photo.CopyTo( new FileStream( filePath, FileMode.Create ) );
+                    }
                 }
 
                 var newStudent = new Models.Student
