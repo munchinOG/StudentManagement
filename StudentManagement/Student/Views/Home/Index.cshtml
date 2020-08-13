@@ -5,11 +5,13 @@
 <div class="card-deck">
     @foreach(var student in Model)
     {
-<div class="card m-3">
+        var photoPath = "~/Images/" + (student.PhotoPath ?? "images.jpg");
+
+<div class="card m-3" style="min-width: 18rem; max-width: 30.5%">
     <div class="card-header">
         <h3>@student.Name</h3>
     </div>
-    <img class="card-img-top" src="images/images.jpg"
+    <img class="card-img-top" src="@photoPath"
          asp-append-version="true" />
     <div class="card-footer text-center">
         <a asp-controller="Home" asp-action="Details" asp-route-id="@student.Id"
