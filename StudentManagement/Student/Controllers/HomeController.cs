@@ -1,6 +1,9 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Mvc;
 using Student.Models;
 using Student.ViewModels;
+using System;
+using System.IO;
 
 namespace Student.Controllers
 {
@@ -8,9 +11,12 @@ namespace Student.Controllers
     {
         //Constructor Injection
         private readonly IStudentRepository _studentRepository;
-        public HomeController( IStudentRepository studentRepository )
+        private readonly IWebHostEnvironment _webHostEnvironment;
+
+        public HomeController( IStudentRepository studentRepository, IWebHostEnvironment webHostEnvironment )
         {
             _studentRepository = studentRepository;
+            _webHostEnvironment = webHostEnvironment;
         }
 
         public ViewResult Index( )
@@ -37,12 +43,29 @@ namespace Student.Controllers
         }
 
         [HttpPost]
-        public IActionResult Create( Models.Student student )
+        public IActionResult Create( StudentCreateViewModel model )
         {
             if(ModelState.IsValid)
             {
-                Models.Student newStudent = _studentRepository.Add( student );
-                return RedirectToAction( "Details", new { Id = newStudent } );
+                string uniqueFileName = null;
+                if(model.Photo != null)
+                {
+                    var uploadsFolder = Path.Combine( _webHostEnvironment.WebRootPath, "images" );
+                    uniqueFileName = Guid.NewGuid().ToString() + "_" + model.Photo.FileName;
+                    var filePath = Path.Combine( uploadsFolder, uniqueFileName );
+                    model.Photo.CopyTo( new FileStream( filePath, FileMode.Create ) );
+                }
+
+                var newStudent = new Models.Student
+                {
+                    Name = model.Name,
+                    Email = model.Email,
+                    Department = model.Department,
+                    PhotoPath = uniqueFileName
+                };
+
+                _studentRepository.Add( newStudent );
+                return RedirectToAction( "Details", new { Id = newStudent.Id } );
             }
 
             return View();
