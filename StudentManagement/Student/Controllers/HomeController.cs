@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Student.Models;
 using Student.ViewModels;
@@ -26,11 +25,11 @@ namespace Student.Controllers
             return View( model );
         }
 
-        public ViewResult Details( int? Id )
+        public ViewResult Details( int? id )
         {
             HomeDetailsViewModel homeDetailsViewModel = new HomeDetailsViewModel()
             {
-                Student = _studentRepository.GetStudent( Id ?? 1 ),
+                Student = _studentRepository.GetStudent( id ?? 1 ),
                 PageTitle = "Student Details"
             };
 
@@ -43,10 +42,33 @@ namespace Student.Controllers
             return View();
         }
 
-        [HttpGet]
-        public ViewResult Edit( int Id )
+        [HttpPost]
+        public IActionResult Create( StudentCreateViewModel model )
         {
-            var student = _studentRepository.GetStudent( Id );
+            if(ModelState.IsValid)
+            {
+                string uniqueFileName = ProcessUploadedFile( model );
+
+                var newStudent = new Models.Student
+                {
+                    Name = model.Name,
+                    Email = model.Email,
+                    Department = model.Department,
+                    PhotoPath = uniqueFileName
+                };
+
+                _studentRepository.Add( newStudent );
+                return RedirectToAction( "Details", new { id = newStudent.Id } );
+            }
+
+            return View();
+
+        }
+
+        [HttpGet]
+        public ViewResult Edit( int id )
+        {
+            var student = _studentRepository.GetStudent( id );
             var studentEditViewModel = new StudentEditViewModel
             {
                 Id = student.Id,
@@ -58,36 +80,48 @@ namespace Student.Controllers
         }
 
         [HttpPost]
-        public IActionResult Create( StudentCreateViewModel model )
+        public IActionResult Edit( StudentEditViewModel model )
         {
             if(ModelState.IsValid)
             {
-                string uniqueFileName = null;
-                if(model.Photos != null && model.Photos.Count > 0)
+                var student = _studentRepository.GetStudent( model.Id );
+                student.Name = model.Name;
+                student.Email = model.Email;
+                student.Department = model.Department;
+                if(model.Photo != null)
                 {
-                    foreach(IFormFile photo in model.Photos)
+                    if(model.ExistingPhotoPath != null)
                     {
-                        var uploadsFolder = Path.Combine( _webHostEnvironment.WebRootPath, "images" );
-                        uniqueFileName = Guid.NewGuid().ToString() + "_" + photo.FileName;
-                        var filePath = Path.Combine( uploadsFolder, uniqueFileName );
-                        photo.CopyTo( new FileStream( filePath, FileMode.Create ) );
+                        var filePath = Path.Combine( _webHostEnvironment.WebRootPath,
+                            "images", model.ExistingPhotoPath );
+                        System.IO.File.Delete( filePath );
                     }
+
+                    student.PhotoPath = ProcessUploadedFile( model );
                 }
 
-                var newStudent = new Models.Student
-                {
-                    Name = model.Name,
-                    Email = model.Email,
-                    Department = model.Department,
-                    PhotoPath = uniqueFileName
-                };
-
-                _studentRepository.Add( newStudent );
-                return RedirectToAction( "Details", new { Id = newStudent.Id } );
+                var updatedStudent = _studentRepository.Update( student );
+                return RedirectToAction( "Index" );
             }
 
             return View();
+        }
 
+        private string ProcessUploadedFile( StudentCreateViewModel model )
+        {
+            string uniqueFileName = null;
+            if(model.Photo != null)
+            {
+                var uploadsFolder = Path.Combine( _webHostEnvironment.WebRootPath, "images" );
+                uniqueFileName = Guid.NewGuid().ToString() + "_" + model.Photo.FileName;
+                var filePath = Path.Combine( uploadsFolder, uniqueFileName );
+                using(var fileStream = new FileStream( filePath, FileMode.Create ))
+                {
+                    model.Photo.CopyTo( fileStream );
+                }
+            }
+
+            return uniqueFileName;
         }
     }
 }

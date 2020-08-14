@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Student.Models;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
 namespace Student.ViewModels
@@ -18,6 +17,6 @@ namespace Student.ViewModels
         [Required]
         public Dept? Department { get; set; }
 
-        public List<IFormFile> Photos { get; set; }
+        public IFormFile Photo { get; set; }
     }
 }
