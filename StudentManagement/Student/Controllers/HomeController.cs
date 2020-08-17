@@ -27,9 +27,18 @@ namespace Student.Controllers
 
         public ViewResult Details( int? id )
         {
-            HomeDetailsViewModel homeDetailsViewModel = new HomeDetailsViewModel()
+            throw new Exception( "Error in Details View" );
+
+            var student = _studentRepository.GetStudent( id.Value );
+
+            if(student == null)
             {
-                Student = _studentRepository.GetStudent( id ?? 1 ),
+                Response.StatusCode = 404;
+                return View( "StudentNotFound", id.Value );
+            }
+            var homeDetailsViewModel = new HomeDetailsViewModel()
+            {
+                Student = student,
                 PageTitle = "Student Details"
             };
 
