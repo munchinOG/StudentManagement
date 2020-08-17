@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -23,6 +24,11 @@ namespace Student
         {
             services.AddDbContextPool<ApplicationDbContext>(
                 options => options.UseSqlServer( _configuration.GetConnectionString( "StudentDbConnection" ) ) );
+
+            services.AddIdentity<IdentityUser, IdentityRole>()
+                .AddEntityFrameworkStores<ApplicationDbContext>();
+
+            services.AddMvc().AddXmlSerializerFormatters();
             services.AddControllersWithViews();
             services.AddControllers( options => options.EnableEndpointRouting = false );
             services.AddScoped<IStudentRepository, SqlStudentRepository>();
@@ -42,6 +48,7 @@ namespace Student
             }
 
             app.UseStaticFiles();
+            app.UseAuthentication();
             //app.UseMvcWithDefaultRoute();
             app.UseRouting();
             app.UseCors();
