@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Student.ViewModels;
 using System.Threading.Tasks;
@@ -24,12 +25,14 @@ namespace Student.Controllers
         }
 
         [HttpGet]
+        [AllowAnonymous]
         public IActionResult Register( )
         {
             return View();
         }
 
         [HttpPost]
+        [AllowAnonymous]
         public async Task<IActionResult> Register( RegisterViewModel model )
         {
             if(ModelState.IsValid)
@@ -57,12 +60,14 @@ namespace Student.Controllers
         }
 
         [HttpGet]
+        [AllowAnonymous]
         public IActionResult Login( )
         {
             return View();
         }
 
         [HttpPost]
+        [AllowAnonymous]
         public async Task<IActionResult> Login( LoginViewModel model )
         {
             if(ModelState.IsValid)
