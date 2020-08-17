@@ -1,14 +1,17 @@
-﻿using System.Collections.Generic;
+﻿using Microsoft.Extensions.Logging;
+using System.Collections.Generic;
 
 namespace Student.Models
 {
     public class SqlStudentRepository : IStudentRepository
     {
         private readonly ApplicationDbContext _context;
+        private readonly ILogger<SqlStudentRepository> _logger;
 
-        public SqlStudentRepository( ApplicationDbContext context )
+        public SqlStudentRepository( ApplicationDbContext context, ILogger<SqlStudentRepository> logger )
         {
             _context = context;
+            _logger = logger;
         }
 
         public Student Add( Student student )
@@ -36,6 +39,13 @@ namespace Student.Models
 
         public Student GetStudent( int id )
         {
+            _logger.LogTrace( "Trace Log" );
+            _logger.LogDebug( "Debug Log" );
+            _logger.LogInformation( "Information Log" );
+            _logger.LogWarning( "Warning Log" );
+            _logger.LogError( "Error Log" );
+            _logger.LogCritical( "Critical Log" );
+
             return _context.Students.Find( id );
         }
 
