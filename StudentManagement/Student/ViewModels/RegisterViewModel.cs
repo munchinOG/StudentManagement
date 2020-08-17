@@ -12,7 +12,7 @@ namespace Student.ViewModels
         public string Password { get; set; }
         [DataType( DataType.Password )]
         [Display( Name = "Confirm Password" )]
-        [Compare( "Password", ErrorMessage = "Password and confirmation password do nit match." )]
+        [Compare( "Password", ErrorMessage = "Password and confirmation password do not match." )]
         public string ConfirmPassword { get; set; }
     }
 }
