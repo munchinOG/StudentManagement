@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using Student.Models;
 using Student.ViewModels;
 using System;
@@ -12,11 +13,13 @@ namespace Student.Controllers
         //Constructor Injection
         private readonly IStudentRepository _studentRepository;
         private readonly IWebHostEnvironment _webHostEnvironment;
+        private readonly ILogger _logger;
 
-        public HomeController( IStudentRepository studentRepository, IWebHostEnvironment webHostEnvironment )
+        public HomeController( IStudentRepository studentRepository, IWebHostEnvironment webHostEnvironment, ILogger<HomeController> logger )
         {
             _studentRepository = studentRepository;
             _webHostEnvironment = webHostEnvironment;
+            _logger = logger;
         }
 
         public ViewResult Index( )
@@ -27,7 +30,14 @@ namespace Student.Controllers
 
         public ViewResult Details( int? id )
         {
-            throw new Exception( "Error in Details View" );
+            //throw new Exception( "Error in Details View" );
+
+            _logger.LogTrace( "Trace Log" );
+            _logger.LogDebug( "Debug Log" );
+            _logger.LogInformation( "Information Log" );
+            _logger.LogWarning( "Warning Log" );
+            _logger.LogError( "Error Log" );
+            _logger.LogCritical( "Critical Log" );
 
             var student = _studentRepository.GetStudent( id.Value );
 
