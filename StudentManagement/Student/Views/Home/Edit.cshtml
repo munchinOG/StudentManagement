@@ -1,9 +1,10 @@
 ﻿@model StudentEditViewModel
 
 @{ ViewBag.Title = "Edit Student";
-                var photoPath = "~/Images/" + (Model.ExistingPhotoPath ?? "images.jpg"); }
+    var photoPath = "~/Images/" + (Model.ExistingPhotoPath ?? "images.jpg"); }
 
-<form enctype="multipart/form-data" asp-controller="Home" asp-action="edit" method="post" class="mt-3">
+<form enctype="multipart/form-data" asp-controller="Home" asp-action="edit"
+      method="post" class="mt-3">
     <input hidden asp-for="Id" />
     <input hidden asp-for="ExistingPhotoPath" />
     <div class="form-group row">
@@ -33,10 +34,10 @@
     </div>
 
     <div class="form-group row">
-        <label asp-for="Photos" class="col-sm-2 col-form-label"></label>
+        <label asp-for="Photo" class="col-sm-2 col-form-label"></label>
         <div class="col-sm-10">
             <div class="custom-file">
-                <input multiple asp-for="Photos" class="form-control custom-file-input">
+                <input multiple asp-for="Photo" class="form-control custom-file-input">
                 <label class="custom-file-label">Clink here to change photo</label>
             </div>
         </div>
@@ -61,7 +62,7 @@
                 $('.custom-file-input').on("change",
                     function () {
                         var fileName = $(this).val().split("\\").pop;
-                        $(this).next('.custom-file-label').html(fileName)
+                        $(this).next('.custom-file-label').html(fileName);
                     });
             });
         </script>
