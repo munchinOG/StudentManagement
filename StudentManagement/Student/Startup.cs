@@ -1,6 +1,8 @@
-﻿using Microsoft.AspNetCore.Builder;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -33,7 +35,14 @@ namespace Student
                  options.Password.RequireNonAlphanumeric = false;
              } ).AddEntityFrameworkStores<ApplicationDbContext>();
 
-            services.AddMvc().AddXmlSerializerFormatters();
+            services.AddMvc( options =>
+             {
+                 var policy = new AuthorizationPolicyBuilder()
+                     .RequireAuthenticatedUser()
+                     .Build();
+                 options.Filters.Add( new AuthorizeFilter( policy ) );
+             } ).AddXmlSerializerFormatters();
+
             services.AddControllersWithViews();
             services.AddControllers( options => options.EnableEndpointRouting = false );
             services.AddScoped<IStudentRepository, SqlStudentRepository>();
