@@ -25,8 +25,13 @@ namespace Student
             services.AddDbContextPool<ApplicationDbContext>(
                 options => options.UseSqlServer( _configuration.GetConnectionString( "StudentDbConnection" ) ) );
 
-            services.AddIdentity<IdentityUser, IdentityRole>()
-                .AddEntityFrameworkStores<ApplicationDbContext>();
+            services.AddIdentity<IdentityUser, IdentityRole>( options =>
+             {
+                 options.Password.RequiredLength = 4;
+                 options.Password.RequiredUniqueChars = 2;
+                 options.Password.RequireUppercase = false;
+                 options.Password.RequireNonAlphanumeric = false;
+             } ).AddEntityFrameworkStores<ApplicationDbContext>();
 
             services.AddMvc().AddXmlSerializerFormatters();
             services.AddControllersWithViews();
