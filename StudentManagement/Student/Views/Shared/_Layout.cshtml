@@ -1,4 +1,4 @@
-﻿@inject SignInManager<IdentityUser> sigInManager;
+﻿@inject SignInManager<ApplicationUser> sigInManager;
 
 <html>
 <head>
@@ -52,15 +52,17 @@
                     Logout @User.Identity.Name
                 </button>
             </form>
-        </li> }
-                    else
-                    {
-        <li class="nav-item">
-            <a asp-action="Register" asp-controller="Account" class="nav-link">Register</a>
         </li>
-                        <li class="nav-item">
-                            <a asp-action="login" asp-controller="Account" class="nav-link">Login</a>
-                        </li>}
+ }
+    else
+    {
+<li class="nav-item">
+    <a asp-action="Register" asp-controller="Account" class="nav-link">Register</a>
+</li>
+                <li class="nav-item">
+                    <a asp-action="login" asp-controller="Account" class="nav-link">Login</a>
+                </li>
+}
                 </ul>
             </div>
         </nav>

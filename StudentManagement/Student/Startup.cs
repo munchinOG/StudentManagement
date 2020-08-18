@@ -27,7 +27,7 @@ namespace Student
             services.AddDbContextPool<ApplicationDbContext>(
                 options => options.UseSqlServer( _configuration.GetConnectionString( "StudentDbConnection" ) ) );
 
-            services.AddIdentity<IdentityUser, IdentityRole>( options =>
+            services.AddIdentity<ApplicationUser, IdentityRole>( options =>
              {
                  options.Password.RequiredLength = 4;
                  options.Password.RequiredUniqueChars = 2;
