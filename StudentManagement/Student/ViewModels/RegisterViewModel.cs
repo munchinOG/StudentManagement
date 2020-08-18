@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Student.Utilities;
 using System.ComponentModel.DataAnnotations;
 
 namespace Student.ViewModels
@@ -8,6 +9,8 @@ namespace Student.ViewModels
         [Required]
         [EmailAddress]
         [Remote( action: "IsEmailInUse", controller: "Account" )]
+        [ValidEmailDomain( allowedDomain: "munchintech.com",
+            ErrorMessage = "Email domain must be munchintech.com" )]
         public string Email { get; set; }
         [Required]
         [DataType( DataType.Password )]
