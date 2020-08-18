@@ -9,7 +9,6 @@ using System.IO;
 
 namespace Student.Controllers
 {
-    [Authorize]
     public class HomeController : Controller
     {
         //Constructor Injection
@@ -60,14 +59,12 @@ namespace Student.Controllers
         }
 
         [HttpGet]
-        [Authorize]
         public ViewResult Create( )
         {
             return View();
         }
 
         [HttpPost]
-        [Authorize]
         public IActionResult Create( StudentCreateViewModel model )
         {
             if(ModelState.IsValid)
@@ -91,7 +88,6 @@ namespace Student.Controllers
         }
 
         [HttpGet]
-        [Authorize]
         public ViewResult Edit( int id )
         {
             var student = _studentRepository.GetStudent( id );
@@ -106,7 +102,6 @@ namespace Student.Controllers
         }
 
         [HttpPost]
-        [Authorize]
         public IActionResult Edit( StudentEditViewModel model )
         {
             if(ModelState.IsValid)
