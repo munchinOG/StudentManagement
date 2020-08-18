@@ -31,6 +31,22 @@ namespace Student.Controllers
             return View();
         }
 
+        [AcceptVerbs( "Get", "Post" )]
+        [AllowAnonymous]
+        public async Task<IActionResult> IsEmailInUse( string email )
+        {
+            var user = await _userManager.FindByEmailAsync( email );
+
+            if(user == null)
+            {
+                return Json( true );
+            }
+            else
+            {
+                return Json( $"Email{email} is already in use" );
+            }
+        }
+
         [HttpPost]
         [AllowAnonymous]
         public async Task<IActionResult> Register( RegisterViewModel model )
@@ -68,7 +84,7 @@ namespace Student.Controllers
 
         [HttpPost]
         [AllowAnonymous]
-        public async Task<IActionResult> Login( LoginViewModel model )
+        public async Task<IActionResult> Login( LoginViewModel model, string returnUrl )
         {
             if(ModelState.IsValid)
             {
@@ -77,7 +93,14 @@ namespace Student.Controllers
 
                 if(result.Succeeded)
                 {
-                    return RedirectToAction( "Index", "Home" );
+                    if(!string.IsNullOrEmpty( returnUrl ) && Url.IsLocalUrl( returnUrl ))
+                    {
+                        return Redirect( returnUrl );
+                    }
+                    else
+                    {
+                        return RedirectToAction( "Index", "Home" );
+                    }
                 }
                 ModelState.AddModelError( string.Empty, "Invalid Login Attempt" );
             }
