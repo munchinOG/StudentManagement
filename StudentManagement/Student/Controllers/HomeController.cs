@@ -9,6 +9,7 @@ using System.IO;
 
 namespace Student.Controllers
 {
+    [Authorize]
     public class HomeController : Controller
     {
         //Constructor Injection

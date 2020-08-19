@@ -66,6 +66,7 @@ namespace Student
             //app.UseMvcWithDefaultRoute();
             app.UseRouting();
             app.UseCors();
+            app.UseAuthorization();
 
 
 
