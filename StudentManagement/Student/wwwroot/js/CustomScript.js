@@ -1,8 +1,8 @@
-﻿function confirmDelete(uniqueId, IsDeleteClicked) {
+﻿function confirmDelete(uniqueId, IsTrue) {
     var deleteSpan = 'deleteSpan_' + uniqueId;
     var confirmDeleteSpan = 'confirmDelete_' + uniqueId;
 
-    if (isDeleteClicked) {
+    if (isTrue) {
         $('#' + deleteSpan).hide();
         $('#' + confirmDeleteSpan).show();
     } else {

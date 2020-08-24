@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using System.Linq;
 
 namespace Student.Models
 {
@@ -17,6 +18,12 @@ namespace Student.Models
         {
             base.OnModelCreating( modelBuilder );
             modelBuilder.Seed();
+
+            foreach(var foreigkey in modelBuilder.Model.GetEntityTypes()
+                .SelectMany( e => e.GetForeignKeys() ))
+            {
+                foreigkey.DeleteBehavior = DeleteBehavior.Restrict;
+            }
         }
     }
 }

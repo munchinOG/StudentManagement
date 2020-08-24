@@ -1,5 +1,11 @@
-﻿<h3>
-    An occured while processing your request.
+﻿@if(ViewBag.ErrorTitle == null)
+{
+<h3>
+    An error occured while processing your request.
     the support team is notified and we are working on the fix
 </h3>
-<h5>Please contact us on munchin@munchintech.com</h5>
+                <h5>Please contact us on munchin@munchintech.com</h5> }
+                            else
+                            {
+                <hi class="text-danger">@ViewBag.ErrorTitle</hi>
+                                <h6 class="text-danger">@ViewBag.ErroeMessage</h6>}

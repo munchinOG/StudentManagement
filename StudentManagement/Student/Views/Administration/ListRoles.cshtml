@@ -7,7 +7,7 @@
 @if(Model.Any())
 {
 <a class="btn btn-primary mb-3" style="width: auto" asp-action="CreateRole" asp-controller="Administration">Add new role</a> foreach(var role in Model)
-                {
+{
 <div class="card mb-3">
     <div class="card-header">
         Role Id : @role.Id
@@ -16,14 +16,27 @@
         <h5 class="card-title">@role.Name</h5>
     </div>
     <div class="card-footer">
-        <a class="btn btn-primary" asp-action="EditRole"
-           asp-controller="Administration" asp-route-id="@role.Id">Edit</a>
-        <a href="#" class="btn btn-danger">Delete</a>
+        <form method="post" asp-action="DeleteRole" asp-route-id="@role.Id">
+            <a class="btn btn-primary" asp-action="EditRole"
+               asp-controller="Administration" asp-route-id="@role.Id">Edit</a>
+
+            <span id="confirmDeleteSpan_@role.Id" style="display: none">
+                <span>Are you sure you want to delete?</span>
+                <button type="submit" class="btn btn-danger">Yes</button>
+                <a href="#" class="btn btn-primary"
+                   onclick="confirmDelete('@role.Id', false)">No</a>
+            </span>
+
+            <span id="deleteSpan_@role.Id">
+                <a href="#" class="btn btn-danger"
+                   onclick="confirmDelete('@role.Id', true)">Delete</a>
+            </span>
+        </form>
     </div>
 </div> }
-            }
-            else
-            {
+}
+else
+{
 <div class="card">
     <div class="card-header">
         No roles created yet
@@ -38,3 +51,7 @@
         </a>
     </div>
 </div>}
+
+@section Scripts {
+    <script src="~/js/CustomScript.js"></script>
+}
