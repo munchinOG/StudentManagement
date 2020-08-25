@@ -57,7 +57,7 @@ namespace Student
                          .RequireClaim( "Create Role" ) );
 
                  options.AddPolicy( "EditRolePolicy",
-                     policy => policy.RequireClaim( "Edit Role" ) );
+                     policy => policy.RequireClaim( "Edit Role", "true" ) );
 
                  //Roles Policy
                  options.AddPolicy( "AdminPolicy",
