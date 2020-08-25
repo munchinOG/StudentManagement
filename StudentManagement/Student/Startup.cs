@@ -43,6 +43,12 @@ namespace Student
                  options.Filters.Add( new AuthorizeFilter( policy ) );
              } ).AddXmlSerializerFormatters();
 
+            services.AddAuthorization( options =>
+             {
+                 options.AddPolicy( "DeleteRolePolicy",
+                     policy => policy.RequireClaim( "Delete Role" ) );
+             } );
+
             services.AddControllersWithViews();
             services.AddControllers( options => options.EnableEndpointRouting = false );
             services.AddScoped<IStudentRepository, SqlStudentRepository>();
