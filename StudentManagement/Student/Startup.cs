@@ -45,9 +45,14 @@ namespace Student
 
             services.AddAuthorization( options =>
              {
+                 //Claims Policy
                  options.AddPolicy( "DeleteRolePolicy",
                      policy => policy.RequireClaim( "Delete Role" )
                          .RequireClaim( "Create Role" ) );
+
+                 //Roles Policy
+                 options.AddPolicy( "AdminPolicy",
+                     policy => policy.RequireRole( "Admin" ) );
              } );
 
             services.AddControllersWithViews();
