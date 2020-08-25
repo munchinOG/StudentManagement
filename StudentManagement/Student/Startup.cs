@@ -50,6 +50,9 @@ namespace Student
                      policy => policy.RequireClaim( "Delete Role" )
                          .RequireClaim( "Create Role" ) );
 
+                 options.AddPolicy( "EditRolePolicy",
+                     policy => policy.RequireClaim( "Edit Role" ) );
+
                  //Roles Policy
                  options.AddPolicy( "AdminPolicy",
                      policy => policy.RequireRole( "Admin" ) );
