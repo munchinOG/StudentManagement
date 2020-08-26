@@ -45,6 +45,13 @@ namespace Student
                  options.Filters.Add( new AuthorizeFilter( policy ) );
              } ).AddXmlSerializerFormatters();
 
+            services.AddAuthentication()
+                .AddGoogle( options =>
+                 {
+                     options.ClientId = "542063870337-g0niar7k6p9d312grejre49t51futcoh.apps.googleusercontent.com";
+                     options.ClientSecret = "6fVA5QxEY8ZZblJRjUOI20nZ";
+                 } );
+
             services.ConfigureApplicationCookie( options =>
              {
                  options.AccessDeniedPath = new PathString( "/Administration/AccessDenied" );
@@ -70,6 +77,7 @@ namespace Student
             services.AddScoped<IStudentRepository, SqlStudentRepository>();
 
             services.AddSingleton<IAuthorizationHandler, CanEditOnlyOtherAdminRolesAndClaimsHandler>();
+            services.AddSingleton<IAuthorizationHandler, SuperAdminHandler>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
