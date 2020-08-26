@@ -50,6 +50,11 @@ namespace Student
                  {
                      options.ClientId = "542063870337-g0niar7k6p9d312grejre49t51futcoh.apps.googleusercontent.com";
                      options.ClientSecret = "6fVA5QxEY8ZZblJRjUOI20nZ";
+                 } )
+                .AddFacebook( options =>
+                 {
+                     options.AppId = "325386538817621";
+                     options.AppSecret = "3e908225550907fd658ffa1b0a85723d";
                  } );
 
             services.ConfigureApplicationCookie( options =>
