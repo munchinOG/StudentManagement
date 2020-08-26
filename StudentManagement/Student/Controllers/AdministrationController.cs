@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace Student.Controllers
 {
-    [Authorize( Policy = "AdminPolicy" )]
+    //[Authorize( Policy = "AdminPolicy" )]
     public class AdministrationController : Controller
     {
         private readonly RoleManager<IdentityRole> _roleManager;
@@ -106,6 +106,7 @@ namespace Student.Controllers
 
 
         [HttpGet]
+        [Authorize( Policy = "EditRolePolicy" )]
         public async Task<IActionResult> ManageUserRoles( string userId )
         {
             ViewBag.userId = userId;
@@ -145,6 +146,7 @@ namespace Student.Controllers
         }
 
         [HttpPost]
+        [Authorize( Policy = "EditRolePolicy" )]
         public async Task<IActionResult> ManageUserRoles( List<UserRolesViewModel> model, string userId )
         {
             var user = await _userManager.FindByIdAsync( userId );
@@ -351,7 +353,6 @@ namespace Student.Controllers
         }
 
         [HttpGet]
-        [Authorize( Policy = "EditRolePolicy" )]
         public async Task<IActionResult> EditRole( string id )
         {
             var role = await _roleManager.FindByIdAsync( id );
@@ -380,7 +381,6 @@ namespace Student.Controllers
         }
 
         [HttpPost]
-        [Authorize( Policy = "EditRolePolicy" )]
         public async Task<IActionResult> EditRole( EditRoleViewModel model )
         {
             var role = await _roleManager.FindByIdAsync( model.Id );
