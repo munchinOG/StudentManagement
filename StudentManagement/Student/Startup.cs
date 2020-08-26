@@ -9,6 +9,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Student.Models;
+using Student.Security;
 
 namespace Student
 {
@@ -57,7 +58,7 @@ namespace Student
                          .RequireClaim( "Create Role" ) );
 
                  options.AddPolicy( "EditRolePolicy",
-                     policy => policy.RequireClaim( "Edit Role", "true" ) );
+                     policy => policy.AddRequirements( new ManageAdminRolesAndClaimsRequirement() ) );
 
                  //Roles Policy
                  options.AddPolicy( "AdminPolicy",
@@ -67,6 +68,8 @@ namespace Student
             services.AddControllersWithViews();
             services.AddControllers( options => options.EnableEndpointRouting = false );
             services.AddScoped<IStudentRepository, SqlStudentRepository>();
+
+            services.AddSingleton<IAuthorizationHandler, CanEditOnlyOtherAdminRolesAndClaimsHandler>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
