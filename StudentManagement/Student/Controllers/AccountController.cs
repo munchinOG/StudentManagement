@@ -100,8 +100,19 @@ namespace Student.Controllers
         [AllowAnonymous]
         public async Task<IActionResult> Login( LoginViewModel model, string returnUrl )
         {
+            model.ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
+
             if(ModelState.IsValid)
             {
+                var user = await _userManager.FindByIdAsync( model.Email );
+
+                if(user != null && !user.EmailConfirmed &&
+                    (await _userManager.CheckPasswordAsync( user, model.Password )))
+                {
+                    ModelState.AddModelError( string.Empty, "Email not confirmed yet" );
+                    return View( model );
+                }
+
                 var result = await _signInManager.PasswordSignInAsync( model.Email, model.Password,
                     model.RememberMe, false );
 
@@ -137,7 +148,7 @@ namespace Student.Controllers
         public async Task<IActionResult>
             ExternalLoginCallBack( string returnUrl = null, string remoteError = null )
         {
-            returnUrl = returnUrl ?? Url.Content( "~/" );
+            returnUrl ??= Url.Content( "~/" );
 
             LoginViewModel loginViewModel = new LoginViewModel
             {
@@ -160,6 +171,20 @@ namespace Student.Controllers
                 return View( "Login", loginViewModel );
             }
 
+            var email = info.Principal.FindFirstValue( ClaimTypes.Email );
+            ApplicationUser user = null;
+
+            if(email != null)
+            {
+                user = await _userManager.FindByEmailAsync( email );
+
+                if(user != null && !user.EmailConfirmed)
+                {
+                    ModelState.AddModelError( string.Empty, "Email not confirmed yet" );
+                    return View( "Login", loginViewModel );
+                }
+            }
+
             var signInResult = await _signInManager.ExternalLoginSignInAsync( info.LoginProvider, info.ProviderKey,
                 isPersistent: false, bypassTwoFactor: true );
 
@@ -169,12 +194,8 @@ namespace Student.Controllers
             }
             else
             {
-                var email = info.Principal.FindFirstValue( ClaimTypes.Email );
-
                 if(email != null)
                 {
-                    var user = await _userManager.FindByEmailAsync( email );
-
                     if(user == null)
                     {
                         user = new ApplicationUser
