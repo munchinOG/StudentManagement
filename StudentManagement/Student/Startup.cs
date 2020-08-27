@@ -35,7 +35,11 @@ namespace Student
                  options.Password.RequiredUniqueChars = 2;
                  options.Password.RequireUppercase = false;
                  options.Password.RequireNonAlphanumeric = false;
-             } ).AddEntityFrameworkStores<ApplicationDbContext>();
+
+                 options.SignIn.RequireConfirmedEmail = true;
+             } )
+                .AddEntityFrameworkStores<ApplicationDbContext>()
+                .AddDefaultTokenProviders();
 
             services.AddMvc( options =>
              {
