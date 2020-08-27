@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using Student.Models;
 using Student.ViewModels;
 using System.Linq;
@@ -13,11 +14,14 @@ namespace Student.Controllers
     {
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly SignInManager<ApplicationUser> _signInManager;
+        private readonly ILogger<AccountController> _logger;
 
-        public AccountController( UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager )
+        public AccountController( UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager,
+            ILogger<AccountController> logger )
         {
             _userManager = userManager;
             _signInManager = signInManager;
+            _logger = logger;
         }
 
         [HttpPost]
@@ -66,13 +70,25 @@ namespace Student.Controllers
 
                 if(result.Succeeded)
                 {
+                    var token = await _userManager.GenerateEmailConfirmationTokenAsync( user );
+
+                    var confirmationLink = Url.Action( "ConfirmEmail", "Account",
+                        new { userId = user.Id, token = token }, Request.Scheme );
+
+                    _logger.Log( LogLevel.Warning, confirmationLink );
+
                     if(_signInManager.IsSignedIn( User ) && User.IsInRole( "Admin" ))
                     {
                         return RedirectToAction( "ListUsers", "Administration" );
                     }
 
-                    await _signInManager.SignInAsync( user, isPersistent: false );
-                    return RedirectToAction( "Index", "Home" );
+                    ViewBag.ErrorTitle = "Registration Successful";
+                    ViewBag.ErrorMessage = "Before you can Login, please confirm your " +
+                                           "email, by clicking on the confirmation link we have emailed you";
+                    return View( "Error" );
+
+                    //await _signInManager.SignInAsync( user, isPersistent: false );
+                    //return RedirectToAction( "Index", "Home" );
                 }
 
                 foreach(var error in result.Errors)
@@ -82,6 +98,34 @@ namespace Student.Controllers
             }
 
             return View();
+        }
+
+        [HttpGet]
+        [AllowAnonymous]
+        public async Task<IActionResult> ConfirmEmail( string userId, string token )
+        {
+            if(userId == null || token == null)
+            {
+                return RedirectToAction( "Index", "Home" );
+            }
+
+            var user = await _userManager.FindByIdAsync( userId );
+
+            if(user == null)
+            {
+                ViewBag.ErrorMessage = $"The User ID {userId} is invalid";
+                return View( "NotFound" );
+            }
+
+            var result = await _userManager.ConfirmEmailAsync( user, token );
+
+            if(result.Succeeded)
+            {
+                return View();
+            }
+
+            ViewBag.ErrorTitle = "Email cannot be confirmed";
+            return View( "Error" );
         }
 
         [HttpGet]
