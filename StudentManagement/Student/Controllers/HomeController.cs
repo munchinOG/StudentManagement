@@ -1,11 +1,14 @@
 ﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Student.Models;
+using Student.Security;
 using Student.ViewModels;
 using System;
 using System.IO;
+using System.Linq;
 
 namespace Student.Controllers
 {
@@ -15,23 +18,32 @@ namespace Student.Controllers
         private readonly IStudentRepository _studentRepository;
         private readonly IWebHostEnvironment _webHostEnvironment;
         private readonly ILogger _logger;
+        private readonly IDataProtector protector;
 
-        public HomeController( IStudentRepository studentRepository, IWebHostEnvironment webHostEnvironment, ILogger<HomeController> logger )
+        public HomeController( IStudentRepository studentRepository, IWebHostEnvironment webHostEnvironment,
+            ILogger<HomeController> logger, IDataProtectionProvider dataProtectionProvider, DataProtectionPurposeStrings dataProtectionPurposeStrings )
         {
             _studentRepository = studentRepository;
             _webHostEnvironment = webHostEnvironment;
             _logger = logger;
+            protector = dataProtectionProvider
+                .CreateProtector( dataProtectionPurposeStrings.StudentIdRouteValue );
         }
 
         [AllowAnonymous]
         public ViewResult Index( )
         {
-            var model = _studentRepository.GetAllStudent();
+            var model = _studentRepository.GetAllStudent()
+                .Select( e =>
+                 {
+                     e.EncryptedId = protector.Protect( e.Id.ToString() );
+                     return e;
+                 } );
             return View( model );
         }
 
         [AllowAnonymous]
-        public ViewResult Details( int? id )
+        public ViewResult Details( string id )
         {
             //throw new Exception( "Error in Details View" );
 
@@ -42,12 +54,14 @@ namespace Student.Controllers
             _logger.LogError( "Error Log" );
             _logger.LogCritical( "Critical Log" );
 
-            var student = _studentRepository.GetStudent( id.Value );
+            int studentId = Convert.ToInt32( protector.Unprotect( id ) );
+
+            var student = _studentRepository.GetStudent( studentId );
 
             if(student == null)
             {
                 Response.StatusCode = 404;
-                return View( "StudentNotFound", id.Value );
+                return View( "StudentNotFound", studentId );
             }
             var homeDetailsViewModel = new HomeDetailsViewModel()
             {

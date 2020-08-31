@@ -19,8 +19,12 @@
               asp-fallback-test-property="position"
               asp-fallback-test-value="absolute"
               asp-suppress-fallback-integrity="true">
-    </enviroment>
 
+        <script src="~/lib/bootstrap/dist/jquery/dist/jquery.js"></script>
+        <script src="~/lib/bootstrap/dist/jquery-validation/dist/jquery.validate.js"></script>
+        <script src="~/lib/bootstrap/dist/jquery-validation-unobtrusive/jquery.validate.unobtrusive.js"></script>
+        <script src="~/lib/bootstrap/dist/js/bootstrap.js"></script>
+    </enviroment>
     <link href="~/css/site.css" rel="stylesheet" />
     <title>@ViewBag.Title</title>
 </head>
@@ -41,20 +45,23 @@
                     <li class="nav-item">
                         <a asp-action="Index" asp-controller="Home" class="nav-link">Create</a>
                     </li>
-                    @if(sigInManager.IsSignedIn( User ) && User.IsInRole( "Admin" ))
-                    {
-        <li class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink"
-               data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                Manage
-            </a>
-            <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-                <a class="dropdown-item" asp-controller="Administration"
-                   asp-action="ListUsers">Users</a>
-                <a class="dropdown-item" asp-controller="Administration"
-                   asp-action="ListRoles">Roles</a>
-            </div>
-        </li>}
+                    @*@if(sigInManager.IsSignedIn( User ) && User.IsInRole( "Admin" ))
+                        {*@
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink"
+                           data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            Manage
+                        </a>
+                        <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                            <a class="dropdown-item" asp-controller="Administration"
+                               asp-action="ListUsers">Users</a>
+                            <a class="dropdown-item" asp-controller="Administration"
+                               asp-action="ListRoles">Roles</a>
+                            <a class="dropdown-item" asp-controller="Administration"
+                               asp-action="ChangePassword">Password</a>
+                        </div>
+                    </li>
+                    @*}*@
                 </ul>
                 <ul class="navbar-nav ml-auto">
                     @if(sigInManager.IsSignedIn( User ))
@@ -75,6 +82,7 @@
                         <li class="nav-item">
                             <a asp-action="login" asp-controller="Account" class="nav-link">Login</a>
                         </li>}
+
                 </ul>
             </div>
         </nav>
