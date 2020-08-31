@@ -17,11 +17,13 @@
     <label class="form-check-label" asp-for="@Model[i].IsSelected">
         @Model[i].UserName
     </label>
-</div>}
+</div>            }
         </div>
         <div class="card-footer">
-            <input type="submit" value="Update" class="btn btn-primary" style="width: auto" />
-            <a asp-action="EditRole" asp-route-Id="@roleId" class="btn btn-primary" style="width: auto">Cancel</a>
+            <input type="submit" value="Update" class="btn btn-primary"
+                   style="width: auto" />
+            <a asp-action="EditRole" asp-route-Id="@roleId"
+               class="btn btn-primary" style="width: auto">Cancel</a>
         </div>
     </div>
 </form>

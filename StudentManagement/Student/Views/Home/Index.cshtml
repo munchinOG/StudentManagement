@@ -15,7 +15,7 @@
          asp-append-version="true" />
 
     <div class="card-footer text-center">
-        <a asp-controller="Home" asp-action="Details" asp-route-id="@student.Id"
+        <a asp-controller="Home" asp-action="Details" asp-route-id="@student.EncryptedId"
            class="btn btn-primary">View</a>
         <a asp-action="edit" asp-controller="home"
            asp-route-id="@student.Id"

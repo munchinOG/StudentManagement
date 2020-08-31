@@ -10,6 +10,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Student.Models;
 using Student.Security;
+using System;
 
 namespace Student
 {
@@ -37,9 +38,24 @@ namespace Student
                  options.Password.RequireNonAlphanumeric = false;
 
                  options.SignIn.RequireConfirmedEmail = true;
+                 options.Tokens.EmailConfirmationTokenProvider = "CustomEmailConfirmation";
+
+                 options.Lockout.MaxFailedAccessAttempts = 5;
+                 options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes( 15 );
+
              } )
                 .AddEntityFrameworkStores<ApplicationDbContext>()
-                .AddDefaultTokenProviders();
+                .AddDefaultTokenProviders()
+                .AddTokenProvider<CustomEmailConfirmationTokenProvider
+                <ApplicationUser>>( "CustomEmailConfirmation" );
+
+            //Changes Token Lifespan of all Token Types
+            services.Configure<DataProtectionTokenProviderOptions>( options =>
+             options.TokenLifespan = TimeSpan.FromHours( 2 ) );
+
+            //Changes token lifespan of just the Email Confirmation Token
+            services.Configure<CustomEmailConfirmationTokenProviderOptions>( options =>
+             options.TokenLifespan = TimeSpan.FromDays( 3 ) );
 
             services.AddMvc( options =>
              {
@@ -70,8 +86,7 @@ namespace Student
              {
                  //Claims Policy
                  options.AddPolicy( "DeleteRolePolicy",
-                     policy => policy.RequireClaim( "Delete Role" )
-                         .RequireClaim( "Create Role" ) );
+                     policy => policy.RequireClaim( "Delete Role" ) );
 
                  options.AddPolicy( "EditRolePolicy",
                      policy => policy.AddRequirements( new ManageAdminRolesAndClaimsRequirement() ) );
@@ -83,10 +98,12 @@ namespace Student
 
             services.AddControllersWithViews();
             services.AddControllers( options => options.EnableEndpointRouting = false );
+
             services.AddScoped<IStudentRepository, SqlStudentRepository>();
 
             services.AddSingleton<IAuthorizationHandler, CanEditOnlyOtherAdminRolesAndClaimsHandler>();
             services.AddSingleton<IAuthorizationHandler, SuperAdminHandler>();
+            services.AddSingleton<DataProtectionPurposeStrings>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -104,10 +121,9 @@ namespace Student
 
             app.UseStaticFiles();
             app.UseAuthentication();
-            //app.UseMvcWithDefaultRoute();
             app.UseRouting();
             app.UseCors();
-            app.UseAuthorization();
+            //app.UseAuthorization();
 
 
 
@@ -120,14 +136,6 @@ namespace Student
             {
                 endpoints.MapControllerRoute( "default", "{controller=home}/{action=index}/{id?}" );
             } );
-
-            //app.UseEndpoints( endpoints =>
-            // {
-            //     endpoints.MapGet( "/", async context =>
-            //     {
-            //         await context.Response.WriteAsync( "Hello World!" );
-            //     } );
-            // } );
         }
     }
 }
