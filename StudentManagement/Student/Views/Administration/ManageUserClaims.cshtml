@@ -7,14 +7,13 @@
     <div class="card-body">
         @for(int i = 0; i < Model.Claims.Count; i++)
         {
-            <div class="form-check m-1">
-                <input type="hidden" asp-for="@Model.Claims[i].ClaimType" />
-                <input asp-for="@Model.Claims[i].IsSelected" class="form-check-input" />
-                <label class="form-check-label" asp-for="@Model.Claims[i].IsSelected">
-                    @Model.Claims[i].ClaimType
-                </label>
-            </div>
-        }
+<div class="form-check m-1">
+    <input type="hidden" asp-for="@Model.Claims[i].ClaimType" />
+    <input asp-for="@Model.Claims[i].IsSelected" class="form-check-input" />
+    <label class="form-check-label" asp-for="@Model.Claims[i].IsSelected">
+        @Model.Claims[i].ClaimType
+    </label>
+</div>}
         <div asp-validation-summary="All" class="text-danger"></div>
     </div>
     <div class="card-footer">
@@ -22,5 +21,4 @@
         <a asp-action="EditUser" asp-route-id="@Model.UserId" class="btn btn-primary"
            style="width: auto">Cancel</a>
     </div>
-
 </form>

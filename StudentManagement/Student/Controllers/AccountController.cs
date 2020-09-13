@@ -17,7 +17,8 @@ namespace Student.Controllers
         private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly ILogger<AccountController> _logger;
 
-        public AccountController( UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager,
+        public AccountController( UserManager<ApplicationUser> userManager,
+            SignInManager<ApplicationUser> signInManager,
             ILogger<AccountController> logger )
         {
             _userManager = userManager;
@@ -78,7 +79,6 @@ namespace Student.Controllers
                 return RedirectToAction( "AddPassword" );
             }
 
-
             return View();
         }
 
@@ -93,7 +93,8 @@ namespace Student.Controllers
                     return RedirectToAction( "Login" );
                 }
 
-                var result = await _userManager.ChangePasswordAsync( user, model.ConfirmPassword, model.NewPassword );
+                var result = await _userManager.ChangePasswordAsync( user,
+                    model.ConfirmPassword, model.NewPassword );
 
                 if(!result.Succeeded)
                 {
@@ -131,6 +132,7 @@ namespace Student.Controllers
             if(ModelState.IsValid)
             {
                 var user = await _userManager.FindByEmailAsync( model.Email );
+
                 if(user != null)
                 {
                     var result = await _userManager.ResetPasswordAsync( user, model.Token, model.Password );
@@ -143,6 +145,7 @@ namespace Student.Controllers
 
                         return View( "ResetPasswordConfirmation" );
                     }
+
                     foreach(var error in result.Errors)
                     {
                         ModelState.AddModelError( "", error.Description );
@@ -171,6 +174,7 @@ namespace Student.Controllers
             if(ModelState.IsValid)
             {
                 var user = await _userManager.FindByEmailAsync( model.Email );
+
                 if(user != null && await _userManager.IsEmailConfirmedAsync( user ))
                 {
                     var token = await _userManager.GeneratePasswordResetTokenAsync( user );
@@ -258,11 +262,11 @@ namespace Student.Controllers
 
                 foreach(var error in result.Errors)
                 {
-                    ModelState.AddModelError( "", error.Description );
+                    ModelState.AddModelError( string.Empty, error.Description );
                 }
             }
 
-            return View();
+            return View( model );
         }
 
         [HttpGet]
@@ -356,6 +360,7 @@ namespace Student.Controllers
                 new { ReturnUrl = returnUrl } );
 
             var properties = _signInManager.ConfigureExternalAuthenticationProperties( provider, redirectUrl );
+
             return new ChallengeResult( provider, properties );
         }
 
@@ -368,12 +373,14 @@ namespace Student.Controllers
             LoginViewModel loginViewModel = new LoginViewModel
             {
                 ReturnUrl = returnUrl,
-                ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList()
+                ExternalLogins =
+                    (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList()
             };
 
             if(remoteError != null)
             {
-                ModelState.AddModelError( string.Empty, $"Error from external provider: {remoteError}" );
+                ModelState.AddModelError( string.Empty,
+                    $"Error from external provider: {remoteError}" );
 
                 return View( "Login", loginViewModel );
             }
@@ -381,7 +388,8 @@ namespace Student.Controllers
             var info = await _signInManager.GetExternalLoginInfoAsync();
             if(info == null)
             {
-                ModelState.AddModelError( string.Empty, "Error loading external login information." );
+                ModelState.AddModelError( string.Empty,
+                    "Error loading external login information." );
 
                 return View( "Login", loginViewModel );
             }
@@ -400,7 +408,8 @@ namespace Student.Controllers
                 }
             }
 
-            var signInResult = await _signInManager.ExternalLoginSignInAsync( info.LoginProvider, info.ProviderKey,
+            var signInResult = await _signInManager.ExternalLoginSignInAsync(
+                info.LoginProvider, info.ProviderKey,
                 isPersistent: false, bypassTwoFactor: true );
 
             if(signInResult.Succeeded)
@@ -420,20 +429,20 @@ namespace Student.Controllers
                         };
 
                         await _userManager.CreateAsync( user );
+
+                        var token = await _userManager.GenerateEmailConfirmationTokenAsync( user );
+
+                        var confirmationLink = Url.Action( "ConfirmEmail", "Account",
+                            new { userId = user.Id, token = token }, Request.Scheme );
+
+                        _logger.Log( LogLevel.Warning, confirmationLink );
+
+
+                        ViewBag.ErrorTitle = "Registration Successful";
+                        ViewBag.ErrorMessage = "Before you can Login, please confirm your " +
+                                               "email, by clicking on the confirmation link we have emailed you";
+                        return View( "Error" );
                     }
-
-                    var token = await _userManager.GenerateEmailConfirmationTokenAsync( user );
-
-                    var confirmationLink = Url.Action( "ConfirmEmail", "Account",
-                        new { userId = user.Id, token = token }, Request.Scheme );
-
-                    _logger.Log( LogLevel.Warning, confirmationLink );
-
-
-                    ViewBag.ErrorTitle = "Registration Successful";
-                    ViewBag.ErrorMessage = "Before you can Login, please confirm your " +
-                                           "email, by clicking on the confirmation link we have emailed you";
-                    return View( "Error" );
 
                     await _userManager.AddLoginAsync( user, info );
                     await _signInManager.SignInAsync( user, isPersistent: false );

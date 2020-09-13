@@ -12,21 +12,25 @@ using System.Linq;
 
 namespace Student.Controllers
 {
+    [Authorize]
     public class HomeController : Controller
     {
         //Constructor Injection
         private readonly IStudentRepository _studentRepository;
         private readonly IWebHostEnvironment _webHostEnvironment;
         private readonly ILogger _logger;
-        private readonly IDataProtector protector;
+        private readonly IDataProtector _protector;
 
-        public HomeController( IStudentRepository studentRepository, IWebHostEnvironment webHostEnvironment,
-            ILogger<HomeController> logger, IDataProtectionProvider dataProtectionProvider, DataProtectionPurposeStrings dataProtectionPurposeStrings )
+        public HomeController( IStudentRepository studentRepository,
+            IWebHostEnvironment webHostEnvironment,
+            ILogger<HomeController> logger,
+            IDataProtectionProvider dataProtectionProvider,
+            DataProtectionPurposeStrings dataProtectionPurposeStrings )
         {
             _studentRepository = studentRepository;
             _webHostEnvironment = webHostEnvironment;
             _logger = logger;
-            protector = dataProtectionProvider
+            _protector = dataProtectionProvider
                 .CreateProtector( dataProtectionPurposeStrings.StudentIdRouteValue );
         }
 
@@ -36,7 +40,7 @@ namespace Student.Controllers
             var model = _studentRepository.GetAllStudent()
                 .Select( e =>
                  {
-                     e.EncryptedId = protector.Protect( e.Id.ToString() );
+                     e.EncryptedId = _protector.Protect( e.Id.ToString() );
                      return e;
                  } );
             return View( model );
@@ -54,7 +58,7 @@ namespace Student.Controllers
             _logger.LogError( "Error Log" );
             _logger.LogCritical( "Critical Log" );
 
-            int studentId = Convert.ToInt32( protector.Unprotect( id ) );
+            int studentId = Convert.ToInt32( _protector.Unprotect( id ) );
 
             var student = _studentRepository.GetStudent( studentId );
 
@@ -63,6 +67,7 @@ namespace Student.Controllers
                 Response.StatusCode = 404;
                 return View( "StudentNotFound", studentId );
             }
+
             var homeDetailsViewModel = new HomeDetailsViewModel()
             {
                 Student = student,
@@ -109,6 +114,7 @@ namespace Student.Controllers
             {
                 Id = student.Id,
                 Name = student.Name,
+                Email = student.Email,
                 Department = student.Department,
                 ExistingPhotoPath = student.PhotoPath
             };
@@ -136,7 +142,8 @@ namespace Student.Controllers
                     student.PhotoPath = ProcessUploadedFile( model );
                 }
 
-                var updatedStudent = _studentRepository.Update( student );
+                //var updatedStudent = _studentRepository.Update( student );
+                _studentRepository.Update( student );
                 return RedirectToAction( "Index" );
             }
 

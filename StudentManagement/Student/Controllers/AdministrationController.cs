@@ -19,7 +19,8 @@ namespace Student.Controllers
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly ILogger<AdministrationController> _logger;
 
-        public AdministrationController( RoleManager<IdentityRole> roleManager, UserManager<ApplicationUser> userManager,
+        public AdministrationController( RoleManager<IdentityRole> roleManager,
+            UserManager<ApplicationUser> userManager,
             ILogger<AdministrationController> logger )
         {
             _roleManager = roleManager;
@@ -331,6 +332,7 @@ namespace Student.Controllers
                 };
 
                 IdentityResult result = await _roleManager.CreateAsync( identityRole );
+
                 if(result.Succeeded)
                 {
                     return RedirectToAction( "ListRoles", "Administration" );
@@ -341,6 +343,7 @@ namespace Student.Controllers
                     ModelState.AddModelError( "", error.Description );
                 }
             }
+
             return View( model );
         }
 
