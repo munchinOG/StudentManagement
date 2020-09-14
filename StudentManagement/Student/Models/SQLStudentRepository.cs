@@ -8,7 +8,8 @@ namespace Student.Models
         private readonly ApplicationDbContext _context;
         private readonly ILogger<SqlStudentRepository> _logger;
 
-        public SqlStudentRepository( ApplicationDbContext context, ILogger<SqlStudentRepository> logger )
+        public SqlStudentRepository( ApplicationDbContext context,
+            ILogger<SqlStudentRepository> logger )
         {
             _context = context;
             _logger = logger;

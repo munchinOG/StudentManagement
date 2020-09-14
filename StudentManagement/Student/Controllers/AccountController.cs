@@ -317,7 +317,7 @@ namespace Student.Controllers
 
             if(ModelState.IsValid)
             {
-                var user = await _userManager.FindByIdAsync( model.Email );
+                var user = await _userManager.FindByEmailAsync( model.Email );
 
                 if(user != null && !user.EmailConfirmed &&
                     (await _userManager.CheckPasswordAsync( user, model.Password )))
@@ -359,16 +359,17 @@ namespace Student.Controllers
             var redirectUrl = Url.Action( "ExternalLoginCallBack", "Account",
                 new { ReturnUrl = returnUrl } );
 
-            var properties = _signInManager.ConfigureExternalAuthenticationProperties( provider, redirectUrl );
+            var properties =
+                _signInManager.ConfigureExternalAuthenticationProperties( provider, redirectUrl );
 
             return new ChallengeResult( provider, properties );
         }
 
         [AllowAnonymous]
-        public async Task<IActionResult> ExternalLoginCallBack
-            ( string returnUrl = null, string remoteError = null )
+        public async Task<IActionResult>
+            ExternalLoginCallback( string returnUrl = null, string remoteError = null )
         {
-            returnUrl ??= Url.Content( "~/" );
+            returnUrl = returnUrl ?? Url.Content( "~/" );
 
             LoginViewModel loginViewModel = new LoginViewModel
             {

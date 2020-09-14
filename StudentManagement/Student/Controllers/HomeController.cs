@@ -12,7 +12,7 @@ using System.Linq;
 
 namespace Student.Controllers
 {
-    [Authorize]
+    //[Authorize]
     public class HomeController : Controller
     {
         //Constructor Injection
