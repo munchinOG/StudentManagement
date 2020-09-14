@@ -19,12 +19,15 @@ namespace Student.Security
             }
 
             string loggedInAdminId =
-                context.User.Claims.FirstOrDefault( c => c.Type == ClaimTypes.NameIdentifier ).Value;
+            context.User.Claims.FirstOrDefault( c => c.Type == ClaimTypes.NameIdentifier ).Value;
+            //    context.User.Claims.FirstOrDefault( c => c.Type == ClaimTypes.NameIdentifier )?.Value;
+
             string adminIdBeingEdited = authFilterContext.HttpContext.Request.Query["userId"];
 
             if(context.User.IsInRole( "Admin" ) &&
                 context.User.HasClaim( claim => claim.Type == "Edit Role" && claim.Value == "true" ) &&
-                adminIdBeingEdited.ToLower() != loggedInAdminId.ToLower())
+            adminIdBeingEdited.ToLower() != loggedInAdminId.ToLower())
+            //adminIdBeingEdited.ToLower() != loggedInAdminId?.ToLower())
             {
                 context.Succeed( requirement );
             }

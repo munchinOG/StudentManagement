@@ -16,7 +16,8 @@ namespace Student.ViewModels
 
         [DataType( DataType.Password )]
         [Display( Name = "Confirm new password" )]
-        [Compare( "NewPassword", ErrorMessage = "The new password and confirmation do not match." )]
+        [Compare( "NewPassword", ErrorMessage =
+            "The new password and confirmation do not match." )]
         public string ConfirmPassword { get; set; }
     }
 }
